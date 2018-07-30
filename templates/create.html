@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Sign In</title>
+    <style>
+      div{
+        position: absolute;
+        right: 10px;
+        top: 5px
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <button type="button" onclick="location.href = '{% url 'log' %}' ">Logout</button>
+    </div>
+    <h2>Create Daily Progress Report</h2>
+    <form action="post_create" method="POST">
+      {% csrf_token %}
+      Work Assigned:
+      <input type="text" name="work" required><br><br>
+      Progress:
+      <textarea rows="5" cols="40" name="progress" required></textarea>
+      <br><br>
+      Document:
+      <input type="file" name="files[]" id="files">
+      <input type="hidden" name="url" id="url">
+      <button type="button" onclick="uploadimage()">Upload</button><br><br>
+      <input type="submit" value="Submit">
+
+    </form>
+
+  </body>
+  {# <script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-app.js"></script> #}
+  <script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+  <script>
+
+
+  var config = {
+  apiKey: 'AIzaSyCJcQO3PpsoDA5nt-sMfJ5DEA3UWbHg1qI',
+  authDomain: 'django-firebase-8e9ec.firebaseapp.com',
+  databaseURL: 'https://django-firebase-8e9ec.firebaseio.com',
+  projectId: "django-firebase-8e9ec",
+  storageBucket: 'django-firebase-8e9ec.appspot.com',
+  messagingSenderId: "275534992463"
+  };
+  firebase.initializeApp(config);
+
+// Get a reference to the storage service, which is used to create references in your storage bucket
+  function uploadimage(){
+   var storaged = firebase.storage();
+
+  var file = document.getElementById("files").files[0];
+
+  var storageRef = storaged.ref();
+
+  var thisref = storageRef.child(file.name).put(file);
+
+  thisref.on('state_changed',function(snapshot){
+    console.log("file uploaded successfully");
+  },
+  function(error){
+
+  },
+  function(){
+    //Upload completed successfully, now we can get the download URL
+    var downloadURL = thisref.snapshot.downloadURL;
+    console.log("got url");
+    alert("file uploaded successfully");
+  }
+);
+// thisref.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+//     console.log('File available at', downloadURL);
+//   });
+//
+// }
+// )
+};
+  </script>
+</html>
